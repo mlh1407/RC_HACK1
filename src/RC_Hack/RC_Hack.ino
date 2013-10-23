@@ -9,18 +9,24 @@
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
+
+
 //RC Controls
 
-int forward = 13;
-int backwards = 12;
-int left = 11;
-int right = 10;
+int forward = 11;
+int backwards = 10;
+int left = 13;
+int right = 12;
+
+int run_speed = 100;
 
 //Sensor
 int converted_sensor_distance = 0;
-int pingTimer = 30;
-int min_sensor_distance = 30;
+int pingTimer = 15;
+int min_sensor_distance = 10;
 
+int smother_sum = 0;
+int debounced_sensor_distance = 0;
 
 void setup() {
   //RC controls
@@ -31,10 +37,17 @@ void setup() {
 }
 
 void loop() {
-  if (millis() >= pingTimer) {   //pingSpeed milliseconds since last ping, do another ping.
+  for (int counter = 0;counter < 5;counter++) {
     unsigned long sensor_distance = sonar.ping();    //Updates distance of ultraonic sensor
-    converted_sensor_distance = sensor_distance / US_ROUNDTRIP_CM;    //Converts to CM
+    smother_sum += sensor_distance;
+    
+    delay(pingTimer);
   }
+  
+  debounced_sensor_distance = smother_sum / 5;
+  
+  converted_sensor_distance = debounced_sensor_distance / US_ROUNDTRIP_CM;    //Converts to CM
+  smother_sum = 0;
   
   if (converted_sensor_distance < min_sensor_distance){
     digitalWrite(forward, LOW);
@@ -54,6 +67,6 @@ void loop() {
     digitalWrite(forward, LOW);
     delay(100);
   } else {
-    digitalWrite(forward, HIGH);
+    analogWrite(forward, run_speed);
   }
 }
