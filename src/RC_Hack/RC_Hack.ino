@@ -16,10 +16,10 @@ int backwards = 10;
 int left = 13;
 int right = 12;
 
-int run_speed = 125;
+int run_speed = 150;
 
-int turn_wait = 1250;
-int turn_between_next = 300;
+int turn_wait = 750;
+int wait_before_next_move = 300;
 
 //Sensor
 int converted_sensor_distance = 0;
@@ -42,7 +42,7 @@ void loop() {
   
   if (converted_sensor_distance < min_sensor_distance && converted_sensor_distance > 0){
     digitalWrite(forward, LOW);
-    delay(300);
+    delay(wait_before_next_move);
     
     //Turn
     digitalWrite(left, HIGH);
@@ -50,7 +50,7 @@ void loop() {
     delay(turn_wait);
     digitalWrite(left, LOW);
     digitalWrite(backwards, LOW);
-    delay(turn_between_next);
+    delay(wait_before_next_move);
   } else {
     analogWrite(forward, run_speed);
   }
